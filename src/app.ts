@@ -30,6 +30,9 @@ const limiter = rateLimit({
 function createApp() {
   const app = express();
 
+  // enable proxy
+  app.enable('trust proxy');
+
   // helmet for setting secure http response headers
   app.use(helmet());
 
@@ -41,6 +44,8 @@ function createApp() {
         'http://127.0.0.1:5173',
         'http://localhost:3000',
         'http://127.0.0.1:3000',
+        'https://thewildoasis-staff-app.vercel.app',
+        'https://thewildoasis-customer-app.vercel.app',
       ],
       credentials: true,
     }),
