@@ -13,6 +13,7 @@ import { errorHandler, successHandler } from './lib/logger/morgan';
 import routes from './routes/v1/routes';
 import AppError from './utils/AppError';
 import xssSanitize from './utils/xssSanitize';
+import logger from './lib/logger/logger';
 
 const allowlist: string[] = [];
 
@@ -31,7 +32,7 @@ function createApp() {
   const app = express();
 
   // enable proxy
-  app.set('trust proxy', 1);
+  app.set('trust proxy', 2);
 
   // helmet for setting secure http response headers
   app.use(helmet());
@@ -95,7 +96,10 @@ function createApp() {
   // compress json response
   app.use(compression());
 
-  app.get('/ip', (req, res) => res.send(req.ip));
+  app.get('/ip', (req, res) => {
+    logger.info(req.ip);
+    return res.send(req.ip);
+  });
 
   // mount v1 api routes
   app.use('/api/v1', routes);
