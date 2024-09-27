@@ -31,7 +31,7 @@ function createApp() {
   const app = express();
 
   // enable proxy
-  app.enable('trust proxy');
+  app.set('trust proxy', 1);
 
   // helmet for setting secure http response headers
   app.use(helmet());
@@ -94,6 +94,8 @@ function createApp() {
 
   // compress json response
   app.use(compression());
+
+  app.get('/ip', (req, res) => res.send(req.ip));
 
   // mount v1 api routes
   app.use('/api/v1', routes);
