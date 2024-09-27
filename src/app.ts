@@ -13,13 +13,12 @@ import { errorHandler, successHandler } from './lib/logger/morgan';
 import routes from './routes/v1/routes';
 import AppError from './utils/AppError';
 import xssSanitize from './utils/xssSanitize';
-import logger from './lib/logger/logger';
 
 const allowlist: string[] = [];
 
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 mins
-  limit: 100, // Limit each IP to 100 requests per `window` (here, per 15 minutes)
+  limit: 200, // Limit each IP to 200 requests per `window` (here, per 15 minutes)
   legacyHeaders: false,
   standardHeaders: 'draft-7',
   skip: (req) => {
@@ -28,13 +27,11 @@ const limiter = rateLimit({
   },
 });
 
-let x = 3;
-
 function createApp() {
   const app = express();
 
   // enable proxy
-  app.set('trust proxy', x);
+  app.set('trust proxy', 3);
 
   // helmet for setting secure http response headers
   app.use(helmet());
@@ -97,16 +94,6 @@ function createApp() {
 
   // compress json response
   app.use(compression());
-
-  app.get('/ip', (req, res) => {
-    logger.info({ ip: req.ip, proxyValue: x });
-    return res.send(req.ip);
-  });
-
-  app.get('update-proxy-value', (req, res) => {
-    x = x + 1;
-    return res.send(x);
-  });
 
   // mount v1 api routes
   app.use('/api/v1', routes);
