@@ -28,11 +28,13 @@ const limiter = rateLimit({
   },
 });
 
+let x = 3;
+
 function createApp() {
   const app = express();
 
   // enable proxy
-  app.set('trust proxy', 2);
+  app.set('trust proxy', x);
 
   // helmet for setting secure http response headers
   app.use(helmet());
@@ -97,8 +99,13 @@ function createApp() {
   app.use(compression());
 
   app.get('/ip', (req, res) => {
-    logger.info(req.ip);
+    logger.info({ ip: req.ip, proxyValue: x });
     return res.send(req.ip);
+  });
+
+  app.get('update-proxy-value', (req, res) => {
+    x = x + 1;
+    return res.send(x);
   });
 
   // mount v1 api routes
